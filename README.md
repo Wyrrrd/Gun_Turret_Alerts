@@ -1,4 +1,4 @@
-# Gun_Turret_Alerts
+# Gun Turret Alerts
 ![mod thumbnail](https://raw.githubusercontent.com/Wyrrrd/Gun_Turret_Alerts/master/thumbnail.png)
 
 (Please note: This is a quick and dirty port to 0.18. As soon as the original is ported to 0.18, this will be removed.)
