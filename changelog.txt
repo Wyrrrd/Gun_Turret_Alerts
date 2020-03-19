@@ -1,12 +1,14 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.18.1
-Date: 22. 2. 2020
+Date: 2020-03-19
   Changes:
     - Added changelog file
     - Changed dependency to base 0.18
+  Bugfixes:
+    - Redesigned surface handling to ensure compatibility with other planets and Blueprint Lab
 ---------------------------------------------------------------------------------------------------
 Version: 0.18.0
-Date: 20. 2. 2020
+Date: 2020-02-20
   Changes:
     - Ported to 0.18
     - Renamed mod for upload in mod portal
