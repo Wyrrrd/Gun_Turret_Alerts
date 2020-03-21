@@ -1,13 +1,15 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.18.3
 Date: 2020-03-21
+  Changes:
+    - Migrated on_event to on_nth_tick for performance
   Bugfixes:
     - Added missing initialization of turret index
 ---------------------------------------------------------------------------------------------------
 Version: 0.18.2
 Date: 2020-03-20
   Changes:
-    - Redesigned surface handling again to be more perfomant
+    - Redesigned surface handling again to be more performant
 ---------------------------------------------------------------------------------------------------
 Version: 0.18.1
 Date: 2020-03-19
