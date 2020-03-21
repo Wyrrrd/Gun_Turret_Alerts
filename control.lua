@@ -4,9 +4,9 @@
 script.on_event({defines.events.on_tick}, function (event)
 	--Every minute the surface is rescanned for ammo-turret type entities. This is stored in the global table. 
 	if event.tick%3600 == 0 or global.turret_entities == nil then
-		local planet = game.surfaces
-		for index,_ in pairs(planet) do
-			global.turret_entities[index] = planet[index].find_entities_filtered{type = "ammo-turret"}
+		global.turret_entities = {}
+		for index,surface in pairs(game.surfaces) do
+			global.turret_entities[index] = surface.find_entities_filtered{type = "ammo-turret"}
 		end
 	end
 	if event.tick%600 == 0 then
