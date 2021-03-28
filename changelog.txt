@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.1
+Date: 2021-03-28
+  Changes:
+    - Added car ammo alerts, if car has guns (this should apply to modded cars and tanks)
+    - Added config options to display/hide car and/or turret ammo alerts
+    - Added german locale
+    - Mod display name is now less focused on turrets
+---------------------------------------------------------------------------------------------------
 Version: 1.1.0
 Date: 2020-12-02
   Changes:

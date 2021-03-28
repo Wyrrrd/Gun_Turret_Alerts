@@ -8,6 +8,12 @@ data:extend({
         setting_type = "runtime-per-user",
         default_value = true
     },
+    {
+        type = "bool-setting",
+        name = "gun-turret-alerts-car-enabled",
+        setting_type = "runtime-per-user",
+        default_value = true
+    },
 	{
         type = "int-setting",
         name = "gun-turret-alerts-threshold",
