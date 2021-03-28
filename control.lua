@@ -31,15 +31,14 @@ script.on_nth_tick(600, function (event)
 					inv_var = turret_entity.get_inventory(defines.inventory.turret_ammo)
 					if inv_var.is_empty() then
 						-- no ammo alert
-						player.add_custom_alert(turret_entity, {type = "item", name = "piercing-rounds-magazine"}, "Out of ammo", true)
+						player.add_custom_alert(turret_entity, {type = "virtual", name = "ammo-icon-red"}, "Turret out of ammo", true)
 					elseif inv_var[1].count < player_threshold then
 						-- low ammo alert
-						player.add_custom_alert(turret_entity, {type = "item", name = "firearm-magazine"}, "Ammo low", true)
+						player.add_custom_alert(turret_entity, {type = "virtual", name = "ammo-icon-yellow"}, "Turret ammo low", true)
 					end
 				end
 			end
 		end
-
 		
 		if GTA_car_enabled and car_entities then
 			for _,car_entity in pairs(car_entities) do
@@ -48,10 +47,10 @@ script.on_nth_tick(600, function (event)
 					inv_var = car_entity.get_inventory(defines.inventory.car_ammo)
 					if inv_var.is_empty() then
 						-- no ammo alert
-						player.add_custom_alert(car_entity, {type = "item", name = "piercing-rounds-magazine"}, "Out of ammo", true)
+						player.add_custom_alert(car_entity, {type = "virtual", name = "ammo-icon-red"}, "Car out of ammo", true)
 					elseif inv_var[1].count < player_threshold then
 						-- low ammo alert
-						player.add_custom_alert(car_entity, {type = "item", name = "firearm-magazine"}, "Ammo low", true)
+						player.add_custom_alert(car_entity, {type = "virtual", name = "ammo-icon-yellow"}, "Car ammo low", true)
 					end
 				end
 			end
