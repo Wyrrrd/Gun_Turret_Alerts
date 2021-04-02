@@ -4,6 +4,9 @@
 ### Description
 Adds alerts when a car or gun turret is out of ammo or has low ammo. The amount of ammo considered low can be configured. Alerts for cars and turrets can be disabled separately.
 
+### Locale
+If you want to contribute by translating this mod, you can view the existing translations [here](https://github.com/Wyrrrd/Gun_Turret_Alerts/tree/master/locale). I'd be happy to add your language and credits to the next release.
+
 ### Credit
 Thanks to [unhott](https://mods.factorio.com/user/unhott) for the [original mod](https://mods.factorio.com/mod/GunTurretAlerts).
 Thanks to [snouz](https://mods.factorio.com/user/snouz) for the new icons and thumbnail.
