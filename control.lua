@@ -2,7 +2,13 @@
 --This mod scans the map for cars and gun-turrets and places alerts when they are low. 
 
 script.on_init(function (event)
-	-- car and turret index init
+	-- index init
+	global.turret_entities = {}
+	global.car_entities = {}
+end)
+
+script.on_configuration_changed(function (event)
+	-- index init fix
 	global.turret_entities = {}
 	global.car_entities = {}
 end)

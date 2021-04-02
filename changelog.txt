@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.4
-Date: 2021-03-29
+Date: 2021-04-02
+  Bugfixes:
+    - Fix multiplayer incompatibility by clearing index on game version/mod version/config change
   Locale:
     - Added alerts to locale
     - Customized alerts with localised name of entities
