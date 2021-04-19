@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.5
+Date: 2021-04-19
+  Features:
+    - Added config option to change behaviour on multiple ammo slots (for cars)
+  Bugfixes:
+    - Fixed only checking for first ammo slot in cars
+  Optimisations:
+    - Theoretical performance improvement by not scanning surfaces twice anymore (once for turrets and once for cars)
+---------------------------------------------------------------------------------------------------
 Version: 1.1.4
 Date: 2021-04-02
   Bugfixes:

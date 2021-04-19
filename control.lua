@@ -1,23 +1,74 @@
 ﻿--control.lua
 --This mod scans the map for cars and gun-turrets and places alerts when they are low. 
 
+local get_ammo_flags = {
+	["added"] = function (inventory)
+		local no,low = false
+		if inventory.is_empty() then
+			no = true
+		else
+			local ammo_count = 0
+			for i=1, #inventory do
+				ammo_count = ammo_count + inventory[i].count
+			end
+			if ammo_count == 0 then
+				no = true
+			elseif ammo_count < player_threshold then
+				low = true
+			end
+		end
+		return no, low
+	end,
+	
+	["individually"] = function (inventory)
+		local no,low = false
+		if inventory.is_empty() then
+			no = true
+		else
+			for i=1, #inventory do
+				if inventory[i].count == 0 then
+					no = true
+				elseif inventory[i].count < player_threshold then
+					low = true
+				end
+			end
+		end
+		return no, low
+	end,
+
+	["selected"] = function (inventory,gun_index)
+		local no,low = false
+		if inventory.is_empty() then
+			no = true
+		else
+			if not gun_index then
+				gun_index = 1
+			end
+			if inventory[gun_index].count == 0 then
+				no = true
+			elseif inventory[gun_index].count < player_threshold then
+				low = true
+			end
+		end
+		return no, low
+	end
+}
+
+
 script.on_init(function (event)
 	-- index init
-	global.turret_entities = {}
-	global.car_entities = {}
+	global.ammo_entities = {}
 end)
 
 script.on_configuration_changed(function (event)
 	-- index init fix
-	global.turret_entities = {}
-	global.car_entities = {}
+	global.ammo_entities = {}
 end)
 
 script.on_nth_tick(3600, function (event)
 	--Every minute the surface is rescanned for car and ammo-turret type entities. This is stored in two global tables. 
 	for index,surface in pairs(game.surfaces) do
-		global.turret_entities[index] = surface.find_entities_filtered{type = "ammo-turret"}
-		global.car_entities[index] = surface.find_entities_filtered{type = "car"}
+		global.ammo_entities[index] = surface.find_entities_filtered{type = {"ammo-turret","car"}}
 	end
 end)
 
@@ -25,38 +76,38 @@ script.on_nth_tick(600, function (event)
 	--Every 10 seconds recheck and give alerts to players for car and ammo-turret entities on the same force as them. 
 	for _,player in pairs(game.connected_players) do
 		
-		GTA_turret_enabled = player.mod_settings["gun-turret-alerts-enabled"].value
-		GTA_car_enabled = player.mod_settings["gun-turret-alerts-car-enabled"].value
+		turret_enabled = player.mod_settings["gun-turret-alerts-enabled"].value
+		car_enabled = player.mod_settings["gun-turret-alerts-car-enabled"].value
+		mode = player.mod_settings["gun-turret-alerts-mode"].value
 		player_threshold = player.mod_settings["gun-turret-alerts-threshold"].value
-		turret_entities = global.turret_entities[player.surface.name]
-		car_entities = global.car_entities[player.surface.name]
+		ammo_entities = global.ammo_entities[player.surface.name]
 
-		if GTA_turret_enabled and turret_entities then
-			for _,turret_entity in pairs(turret_entities) do
-				if turret_entity.valid and turret_entity.force == player.force then
-					inv_var = turret_entity.get_inventory(defines.inventory.turret_ammo)
-					if inv_var.is_empty() then
-						-- no ammo alert
-						player.add_custom_alert(turret_entity, {type = "virtual", name = "ammo-icon-red"}, {"gun-turret-alerts.message-empty", turret_entity.localised_name}, true)
-					elseif inv_var[1].count < player_threshold then
-						-- low ammo alert
-						player.add_custom_alert(turret_entity, {type = "virtual", name = "ammo-icon-yellow"}, {"gun-turret-alerts.message-low", turret_entity.localised_name}, true)
+		if ammo_entities then
+			for _,entity in pairs(ammo_entities) do
+				if entity.valid and entity.force == player.force then
+
+					local inventory
+					if entity.type == "ammo-turret" and turret_enabled then
+						inventory = entity.get_inventory(defines.inventory.turret_ammo)
+					elseif entity.type == "car" and car_enabled then
+						inventory = entity.get_inventory(defines.inventory.car_ammo)
 					end
-				end
-			end
-		end
-		
-		if GTA_car_enabled and car_entities then
-			for _,car_entity in pairs(car_entities) do
-				-- extra check if car has gun
-				if car_entity.valid and car_entity.force == player.force and car_entity.selected_gun_index then
-					inv_var = car_entity.get_inventory(defines.inventory.car_ammo)
-					if inv_var.is_empty() then
+
+					local no, low
+					if inventory and get_ammo_flags[mode] then
+						if entity.type == "ammo-turret" then
+							no, low = get_ammo_flags[mode](inventory)
+						elseif entity.type == "car" then
+							no, low = get_ammo_flags[mode](inventory,entity.selected_gun_index)
+						end
+					end
+
+					if no then
 						-- no ammo alert
-						player.add_custom_alert(car_entity, {type = "virtual", name = "ammo-icon-red"}, {"gun-turret-alerts.message-empty", car_entity.localised_name}, true)
-					elseif inv_var[1].count < player_threshold then
+						player.add_custom_alert(entity, {type = "virtual", name = "ammo-icon-red"}, {"gun-turret-alerts.message-empty", entity.localised_name}, true)
+					elseif low then
 						-- low ammo alert
-						player.add_custom_alert(car_entity, {type = "virtual", name = "ammo-icon-yellow"}, {"gun-turret-alerts.message-low", car_entity.localised_name}, true)
+						player.add_custom_alert(entity, {type = "virtual", name = "ammo-icon-yellow"}, {"gun-turret-alerts.message-low", entity.localised_name}, true)
 					end
 				end
 			end

@@ -14,13 +14,18 @@ data:extend({
         setting_type = "runtime-per-user",
         default_value = true
     },
+    {
+        type = "string-setting",
+        name = "gun-turret-alerts-mode",
+        setting_type = "runtime-per-user",
+        allowed_values = {"added","individually","selected"},
+        default_value = "selected"
+    },
 	{
         type = "int-setting",
         name = "gun-turret-alerts-threshold",
         setting_type = "runtime-per-user",
         default_value = 8,
 		minimum_value = 0
-		
-    }
-	
+    },
 })
