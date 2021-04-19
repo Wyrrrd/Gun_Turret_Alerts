@@ -87,13 +87,13 @@ script.on_nth_tick(600, function (event)
 				if entity.valid and entity.force == player.force then
 
 					local inventory
-					if entity.type == "ammo-turret" and turret_enabled then
+					if turret_enabled and entity.type == "ammo-turret" then
 						inventory = entity.get_inventory(defines.inventory.turret_ammo)
-					elseif entity.type == "car" and car_enabled then
+					elseif car_enabled and entity.type == "car" and entity.prototype.guns then
 						inventory = entity.get_inventory(defines.inventory.car_ammo)
 					end
 
-					local no, low
+					local no, low = false
 					if inventory and get_ammo_flags[mode] then
 						if entity.type == "ammo-turret" then
 							no, low = get_ammo_flags[mode](inventory)
