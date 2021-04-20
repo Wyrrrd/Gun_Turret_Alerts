@@ -76,11 +76,11 @@ script.on_nth_tick(600, function (event)
 	--Every 10 seconds recheck and give alerts to players for car and ammo-turret entities on the same force as them. 
 	for _,player in pairs(game.connected_players) do
 		
-		turret_enabled = player.mod_settings["gun-turret-alerts-enabled"].value
-		car_enabled = player.mod_settings["gun-turret-alerts-car-enabled"].value
-		mode = player.mod_settings["gun-turret-alerts-mode"].value
-		player_threshold = player.mod_settings["gun-turret-alerts-threshold"].value
-		ammo_entities = global.ammo_entities[player.surface.name]
+		local turret_enabled = player.mod_settings["gun-turret-alerts-enabled"].value
+		local car_enabled = player.mod_settings["gun-turret-alerts-car-enabled"].value
+		local mode = player.mod_settings["gun-turret-alerts-mode"].value
+		local player_threshold = player.mod_settings["gun-turret-alerts-threshold"].value
+		local ammo_entities = global.ammo_entities[player.surface.name]
 
 		if ammo_entities then
 			for _,entity in pairs(ammo_entities) do
