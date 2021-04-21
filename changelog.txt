@@ -1,12 +1,15 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.5
-Date: 2021-04-19
+Date: 2021-04-21
   Features:
-    - Added config option to change behaviour on multiple ammo slots (for cars)
+    - Added config option to change behaviour on multiple ammo slots (mainly for cars)
   Bugfixes:
-    - Fixed only checking for first ammo slot in cars
+    - Fixed only checking first ammo slot in cars
+    - Fixed modded cars without guns causing ammo empty alerts (AAI)
   Optimisations:
-    - Theoretical performance improvement by not scanning surfaces twice anymore (once for turrets and once for cars)
+    - Only scanning surfaces for forces with connected players
+    - Only scanning surfaces on init now, updating by single entities as they are build or removed
+    - Only scanning surfaces once instead of twice (once for turrets and once for cars)
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.4
 Date: 2021-04-02
