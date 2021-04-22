@@ -13,57 +13,53 @@ end
 
 --local functions
 
-local get_ammo_flags = {
+local get_ammo_flag = {
 	--Applies mode to inventory, calculates and returns respective inventory flags
+	--Uses boolean return value as ternary, with true = no ammo, false = low ammo and nil = enough ammo
 	["added"] = function (inventory,player_threshold)
-		local no,low = false
 		if inventory.is_empty() then
-			no = true
+			return true
 		else
 			local ammo_count = 0
 			for i=1, #inventory do
 				ammo_count = ammo_count + inventory[i].count
 			end
 			if ammo_count == 0 then
-				no = true
+				return true
 			elseif ammo_count < player_threshold then
-				low = true
+				return false
 			end
 		end
-		return no, low
 	end,
 	
 	["individually"] = function (inventory,player_threshold)
-		local no,low = false
 		if inventory.is_empty() then
-			no = true
+			return true
 		else
 			for i=1, #inventory do
 				if inventory[i].count == 0 then
-					no = true
+					return true
 				elseif inventory[i].count < player_threshold then
-					low = true
+					return false
 				end
 			end
 		end
-		return no, low
 	end,
 
 	["selected"] = function (inventory,player_threshold,gun_index)
-		local no,low = false
 		if inventory.is_empty() then
-			no = true
+			return true
 		else
 			if not gun_index then
-				-- default to added mode if no slot selected (probably multislot turret)
-				no, low = get_ammo_flags["added"](inventory, player_threshold)
-			elseif inventory[gun_index].count == 0 then
-				no = true
+				-- default to first slot if no slot selected (probably multislot turret)
+				gun_index = 1
+			end
+			if inventory[gun_index].count == 0 then
+				return true
 			elseif inventory[gun_index].count < player_threshold then
-				low = true
+				return false
 			end
 		end
-		return no, low
 	end
 }
 
@@ -166,20 +162,20 @@ local function generate_alerts()
 					end
 
 					--Check for states of no or low ammo based on mode
-					local no, low = false
-					if inventory and get_ammo_flags[mode] then
+					local ammo_flag
+					if inventory and get_ammo_flag[mode] then
 						if entity.type == "ammo-turret" then
-							no, low = get_ammo_flags[mode](inventory, player_threshold)
+							ammo_flag = get_ammo_flag[mode](inventory, player_threshold)
 						elseif entity.type == "car" then
-							no, low = get_ammo_flags[mode](inventory, player_threshold, entity.selected_gun_index)
+							ammo_flag = get_ammo_flag[mode](inventory, player_threshold, entity.selected_gun_index)
 						end
 					end
 
 					--Create alert for present state
-					if no then
+					if ammo_flag then
 						-- no ammo alert
 						player.add_custom_alert(entity, {type = "virtual", name = "ammo-icon-red"}, {"gun-turret-alerts.message-empty", entity.localised_name}, true)
-					elseif low then
+					elseif ammo_flag == false then
 						-- low ammo alert
 						player.add_custom_alert(entity, {type = "virtual", name = "ammo-icon-yellow"}, {"gun-turret-alerts.message-low", entity.localised_name}, true)
 					end

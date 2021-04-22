@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.6
+Date: 2021-04-22
+  Bugfixes:
+    - Defaulting multislot mode "selected" to first slot, if no slot selected. Defaulting to "added" mode caused a crash.
+  Scripting:
+    - Simplified some boolean logic misusing it as ternary
+---------------------------------------------------------------------------------------------------
 Version: 1.1.5
 Date: 2021-04-21
   Features:
