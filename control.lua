@@ -166,6 +166,11 @@ local function generate_alerts()
 					if inventory and get_ammo_flag[mode] then
 						if entity.type == "ammo-turret" then
 							ammo_flag = get_ammo_flag[mode](inventory, player_threshold)
+							if entity.prototype.automated_ammo_count then
+								if entity.prototype.automated_ammo_count < player_threshold then
+									ammo_flag = get_ammo_flag[mode](inventory, entity.prototype.automated_ammo_count)
+								end
+							end
 						elseif entity.type == "car" then
 							ammo_flag = get_ammo_flag[mode](inventory, player_threshold, entity.selected_gun_index)
 						end

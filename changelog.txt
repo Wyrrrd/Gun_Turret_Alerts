@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.7
+Date: 2021-06-21
+  Compatibility:
+    - Added compatibility to Space Exploration's Meteor defence and other mods (no longer displays alert when ammo is dynamically loaded) (by snouz)
+---------------------------------------------------------------------------------------------------
 Version: 1.1.6
 Date: 2021-04-22
   Bugfixes:
