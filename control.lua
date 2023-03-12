@@ -65,9 +65,10 @@ local get_ammo_flag = {
 
 local function add_entity_to_list(event)
 	--Whenever an ammo-turret, car or artillery type entity is built, add it to the global table.
-	local index = event.created_entity.surface.name.."_"..event.created_entity.force.name
+	local entity = event.created_entity or event.entity
+	local index = entity.surface.name.."_"..entity.force.name
 	if global.ammo_entities[index] then
-		table.insert(global.ammo_entities[index], event.created_entity)
+		table.insert(global.ammo_entities[index], entity)
 	end
 end
 
@@ -212,9 +213,12 @@ script.on_event(defines.events.on_forces_merged, remove_force_from_list)
 
 script.on_event(defines.events.on_built_entity, add_entity_to_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
 script.on_event(defines.events.on_robot_built_entity, add_entity_to_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
+script.on_event(defines.events.script_raised_built, add_entity_to_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
+script.on_event(defines.events.script_raised_revive, add_entity_to_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
 
 script.on_event(defines.events.on_player_mined_entity, remove_entity_from_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
 script.on_event(defines.events.on_robot_mined_entity, remove_entity_from_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
 script.on_event(defines.events.on_entity_died, remove_entity_from_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
+script.on_event(defines.events.script_raised_destroy, remove_entity_from_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
 
 script.on_nth_tick(600, generate_alerts)
