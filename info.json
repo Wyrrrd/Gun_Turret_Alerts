@@ -1,9 +1,9 @@
 {
     "name": "Gun_Turret_Alerts",
-    "version": "1.1.11",
+    "version": "1.1.12",
     "title": "Ammo Alerts",
     "author": "Wyrrrd",
-    "factorio_version": "1.1",
+    "factorio_version": "2.0",
     "dependencies": ["base >= 1.1.0"],
     "description": "Adds map alerts for players when a turret or car is either out of ammo or has low ammo"
 }
