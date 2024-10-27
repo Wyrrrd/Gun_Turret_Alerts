@@ -1,37 +1,45 @@
-﻿--settings.lua
-
-
 data:extend({
     {
         type = "bool-setting",
-        name = "gun-turret-alerts-enabled",
-        setting_type = "runtime-per-user",
-        default_value = true
+        name = "turret_alerts_enabled",
+        setting_type = "runtime-global",
+        default_value = true,
+        order = "a"
     },
     {
         type = "bool-setting",
-        name = "gun-turret-alerts-car-enabled",
-        setting_type = "runtime-per-user",
-        default_value = true
+        name = "turret_alerts_car_enabled",
+        setting_type = "runtime-global",
+        default_value = true,
+        order = "b"
     },
     {
         type = "bool-setting",
-        name = "gun-turret-alerts-artillery-enabled",
-        setting_type = "runtime-per-user",
-        default_value = false
+        name = "turret_alerts_tank_enabled",
+        setting_type = "runtime-global",
+        default_value = true,
+        order = "c"
     },
     {
-        type = "string-setting",
-        name = "gun-turret-alerts-mode",
-        setting_type = "runtime-per-user",
-        allowed_values = {"added","individually","selected"},
-        default_value = "selected"
+        type = "bool-setting",
+        name = "turret_alerts_artillery_enabled",
+        setting_type = "runtime-global",
+        default_value = true,
+        order = "d"
     },
-	{
+    {
+        type = "bool-setting",
+        name = "turret_alerts_spidetron_enabled",
+        setting_type = "runtime-global",
+        default_value = true,
+        order = "d"
+    },
+    {
         type = "int-setting",
-        name = "gun-turret-alerts-threshold",
-        setting_type = "runtime-per-user",
+        name = "turret_alerts_low_ammo_threshold",
+        setting_type = "runtime-global",
         default_value = 8,
-		minimum_value = 0
-    },
+        minimum_value = 0,
+        order = "e"
+    }
 })
