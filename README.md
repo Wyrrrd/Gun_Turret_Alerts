@@ -12,4 +12,4 @@ Thanks to [unhott](https://mods.factorio.com/user/unhott) for the [original mod]
 Thanks to [snouz](https://mods.factorio.com/user/snouz) for the new icons and thumbnail.  
 Thanks to [Friendch](https://mods.factorio.com/user/Friendch) for the french locale.  
 Thanks to [eugenikus8](https://github.com/eugenikus8) for the russian locale.  
-Thanks to [Met_en_Bouldry](https://crowdin.com/profile/Met_en_Bouldry) for the ukranian locale.  
+Thanks to [Met_en_Bouldry](https://crowdin.com/profile/Met_en_Bouldry) for the ukrainian locale.  
