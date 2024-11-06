@@ -120,7 +120,7 @@ local function remove_force_from_list(event)
 	elseif event.source and event.destination then
 		param.force = event.destination
 		add_force_to_list(param)
-		force = source
+		force = event.source
 	end
 
 	if force and not force.connected_players then

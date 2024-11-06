@@ -9,5 +9,7 @@ If you want to contribute by translating this mod, you can view the existing tra
 
 ### Credit
 Thanks to [unhott](https://mods.factorio.com/user/unhott) for the [original mod](https://mods.factorio.com/mod/GunTurretAlerts).  
-Thanks to [snouz](https://mods.factorio.com/user/snouz) for the new icons and thumbnail.  
+Thanks to [snouz](https://mods.factorio.com/user/snouz) for the new icons and thumbnail.
 Thanks to [Friendch](https://mods.factorio.com/user/Friendch) for the french locale.
+Thanks to [eugenikus8](https://github.com/eugenikus8) for the russian locale.
+Thanks to [Met_en_Bouldry](https://crowdin.com/profile/Met_en_Bouldry) for the ukranian locale.
