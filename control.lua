@@ -170,7 +170,7 @@ local function generate_alerts()
 		local ammo_entities = storage.ammo_entities[player.surface.name.."_"..player.force.name]
 
 		if ammo_entities then
-			for _,entity in pairs(ammo_entities) do
+			for index,entity in pairs(ammo_entities) do
 				if entity.valid then
 					if entity.force == player.force then
 
@@ -213,9 +213,7 @@ local function generate_alerts()
 						end
 					end
 				else
-					local param = {}
-					param.entity = entity
-					remove_entity_from_list(param)
+					ammo_entities[index] = nil
 				end
 			end
 		end
