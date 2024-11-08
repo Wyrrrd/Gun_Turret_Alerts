@@ -34,4 +34,10 @@ data:extend({
         default_value = 8,
 		minimum_value = 0
     },
+    {
+        type = "bool-setting",
+        name = "gun-turret-alerts-z-automated-full",
+        setting_type = "runtime-per-user",
+        default_value = true
+    },
 })

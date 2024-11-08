@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.2
+Date: 2024-11-08
+  Changes:
+    - Cleanup tracking table on surface rename/deletion
+  Bugfixes:
+    - Quick fix setting for manual turret fill
+---------------------------------------------------------------------------------------------------
 Version: 2.0.1
 Date: 2024-11-06
   Locale:

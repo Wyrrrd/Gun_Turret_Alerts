@@ -166,6 +166,7 @@ local function generate_alerts()
 		local artillery_enabled = player.mod_settings["gun-turret-alerts-artillery-enabled"].value
 		local mode = player.mod_settings["gun-turret-alerts-mode"].value
 		local player_threshold = player.mod_settings["gun-turret-alerts-threshold"].value
+		local autofull = player.mod_settings["gun-turret-alerts-z-automated-full"].value
 		local ammo_entities = storage.ammo_entities[player.surface.name.."_"..player.force.name]
 
 		if ammo_entities then
@@ -192,7 +193,7 @@ local function generate_alerts()
 						if inventory and get_ammo_flag[mode] then
 							if entity.type == "ammo-turret" or entity.type == "artillery-turret" or entity.type == "artillery-wagon" then
 								ammo_flag = get_ammo_flag[mode](inventory, player_threshold)
-								if entity.prototype.automated_ammo_count then
+								if autofull and entity.prototype.automated_ammo_count then
 									if entity.prototype.automated_ammo_count < player_threshold then
 										ammo_flag = get_ammo_flag[mode](inventory, entity.prototype.automated_ammo_count)
 									end
