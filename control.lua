@@ -90,15 +90,17 @@ local function add_force_to_list(event)
 	local player, force
 	if event.player_index then
 		player = game.get_player(event.player_index)
-		force = player.force
+		if player and player.valid then
+			force = player.force
+		end
 	elseif event.force then
 		force = event.force
-		if force.connected_players then
+		if force.valid and force.connected_players then
 			player = force.connected_players[1]
 		end
 	end
 
-	if player and force and not storage.ammo_entities[player.surface.name.."_"..force.name] then
+	if player and player.valid and force and force.valid and not storage.ammo_entities[player.surface.name.."_"..force.name] then
 		for _,surface in pairs(game.surfaces) do
 			storage.ammo_entities[surface.name.."_"..force.name] = surface.find_entities_filtered{type = {"ammo-turret","car","artillery-turret","artillery-wagon","spider-vehicle"}, force = force, to_be_deconstructed = false}
 		end
