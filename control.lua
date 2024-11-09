@@ -236,7 +236,7 @@ script.on_event(defines.events.on_force_created, add_force_to_list)
 script.on_event(defines.events.on_forces_merged, remove_force_from_list)
 
 script.on_event(defines.events.on_surface_renamed, remove_surface_from_list)
-script.on_event(defines.events.on_surface_deleted, remove_surface_from_list)
+script.on_event(defines.events.on_pre_surface_deleted, remove_surface_from_list)
 
 script.on_event(defines.events.on_built_entity, add_entity_to_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "spider-vehicle"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
 script.on_event(defines.events.on_robot_built_entity, add_entity_to_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "spider-vehicle"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
