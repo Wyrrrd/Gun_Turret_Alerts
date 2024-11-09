@@ -132,13 +132,13 @@ end
 
 local function remove_surface_from_list(event)
 	--Whenever a surface is renamed or deleted, move/remove all entities in/from the global table.
-	for force,_ in pairs(game.forces) do
+	for _,force in pairs(game.forces) do
 		local index
 		if event.new_name then
-			storage.ammo_entities[new_name.."_"..force.name] = table.deepcopy(storage.ammo_entities[old_name.."_"..force.name])
-			index = old_name.."_"..force.name
+			storage.ammo_entities[event.new_name.."_"..force.name] = table.deepcopy(storage.ammo_entities[event.old_name.."_"..force.name])
+			index = event.old_name.."_"..force.name
 		elseif event.surface_index then
-			index = game.surfaces[surface_index].name.."_"..force.name
+			index = game.surfaces[event.surface_index].name.."_"..force.name
 		end
 
 		if index then
