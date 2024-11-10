@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.6
+Date: 2024-11-10
+  Features:
+    - Add support to enable alerts for other surfaces (before, alerts were only generated for the
+      current surface)
+  Bugfixes:
+    - Fix additional surface handling (when a new surface was created, from then on entities were
+      not added to the global list until all players of a force leave and join again, which is
+      technically impossible in single player)
+---------------------------------------------------------------------------------------------------
 Version: 2.0.5
 Date: 2024-11-09
   Bugfixes:
@@ -35,10 +45,6 @@ Date: 2024-10-27
     - Renamed car group to vehicle group in all languages
   Features:
     - Added spidertrons to vehicle group
-  Info:
-    - Planned: Switch from surface names to surface indexes (as names can change)
-    - Planned: Cleanup tracking table on surface deletion (may happen with space platforms)
-    - Planned: Add settings to allow players to view alerts for current or multiple/all surfaces
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.11
 Date: 2023-03-12
@@ -63,12 +69,14 @@ Date: 2021-08-06
 Version: 1.1.7
 Date: 2021-06-21
   Compatibility:
-    - Added compatibility to Space Exploration's Meteor defence and other mods (no longer displays alert when ammo is dynamically loaded) (by snouz)
+    - Added compatibility to Space Exploration's Meteor defence and other mods (no longer displays
+      alert when ammo is dynamically loaded) (by snouz)
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.6
 Date: 2021-04-22
   Bugfixes:
-    - Defaulting multislot mode "selected" to first slot, if no slot selected. Defaulting to "added" mode caused a crash.
+    - Defaulting multislot mode "selected" to first slot, if no slot selected. Defaulting to
+      "added" mode caused a crash.
   Scripting:
     - Simplified some boolean logic misusing it as ternary
 ---------------------------------------------------------------------------------------------------

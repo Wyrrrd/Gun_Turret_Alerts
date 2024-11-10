@@ -40,4 +40,16 @@ data:extend({
         setting_type = "runtime-per-user",
         default_value = true
     },
+    {
+        type = "bool-setting",
+        name = "gun-turret-alerts-z-show-planets",
+        setting_type = "runtime-per-user",
+        default_value = false
+    },
+    {
+        type = "bool-setting",
+        name = "gun-turret-alerts-z-show-platforms",
+        setting_type = "runtime-per-user",
+        default_value = false
+    },
 })

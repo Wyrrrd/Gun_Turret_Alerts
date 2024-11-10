@@ -132,6 +132,20 @@ local function remove_force_from_list(event)
 	end
 end
 
+local function add_surface_to_list(event)
+	--Whenever a surface is created, add an empty list to the global table for each force with a connected player.
+	local surface
+	if event.surface_index then
+		surface = game.surfaces[event.surface_index]
+	end
+
+	for _,force in pairs(game.forces) do
+		if surface and surface.valid and not storage.ammo_entities[surface.name.."_"..force.name] and force.connected_players[1] then
+			storage.ammo_entities[surface.name.."_"..force.name] = {}
+		end
+	end
+end
+
 local function remove_surface_from_list(event)
 	--Whenever a surface is renamed or deleted, move/remove all entities in/from the global table.
 	for _,force in pairs(game.forces) do
@@ -168,54 +182,63 @@ local function generate_alerts()
 		local artillery_enabled = player.mod_settings["gun-turret-alerts-artillery-enabled"].value
 		local mode = player.mod_settings["gun-turret-alerts-mode"].value
 		local player_threshold = player.mod_settings["gun-turret-alerts-threshold"].value
-		local autofull = player.mod_settings["gun-turret-alerts-z-automated-full"].value
-		local ammo_entities = storage.ammo_entities[player.surface.name.."_"..player.force.name]
+		local auto_full = player.mod_settings["gun-turret-alerts-z-automated-full"].value
+		local show_planets = player.mod_settings["gun-turret-alerts-z-show-planets"].value
+		local show_platforms = player.mod_settings["gun-turret-alerts-z-show-platforms"].value
 
-		if ammo_entities then
-			for index,entity in pairs(ammo_entities) do
-				if entity.valid then
-					if entity.force == player.force then
+		for _,surface in pairs(game.surfaces) do
+			local ammo_entities
 
-						--Get ammo inventory based on entity type, skip vehicles without guns
-						local inventory
-						if turret_enabled and entity.type == "ammo-turret" then
-							inventory = entity.get_inventory(defines.inventory.turret_ammo)
-						elseif car_enabled and (entity.type == "car" or entity.type == "spider-vehicle") and not table_is_empty(entity.prototype.guns) then
-							inventory = entity.get_inventory(defines.inventory.car_ammo)
-						elseif artillery_enabled then
-							if entity.type == "artillery-turret" then
-								inventory = entity.get_inventory(defines.inventory.artillery_turret_ammo)
-							elseif entity.type == "artillery-wagon" then
-								inventory = entity.get_inventory(defines.inventory.artillery_wagon_ammo)
-							end
-						end
+			if surface == player.surface or (show_platforms and surface.platform) or (show_planets and surface.planet) then
+				ammo_entities = storage.ammo_entities[surface.name.."_"..player.force.name]
+			end
 
-						--Check for states of no or low ammo based on mode
-						local ammo_flag
-						if inventory and get_ammo_flag[mode] then
-							if entity.type == "ammo-turret" or entity.type == "artillery-turret" or entity.type == "artillery-wagon" then
-								ammo_flag = get_ammo_flag[mode](inventory, player_threshold)
-								if autofull and entity.prototype.automated_ammo_count then
-									if entity.prototype.automated_ammo_count < player_threshold then
-										ammo_flag = get_ammo_flag[mode](inventory, entity.prototype.automated_ammo_count)
-									end
+			if ammo_entities and not table_is_empty(ammo_entities) then
+				for index,entity in pairs(ammo_entities) do
+					if entity.valid then
+						if entity.force == player.force then
+
+							--Get ammo inventory based on entity type, skip vehicles without guns
+							local inventory
+							if turret_enabled and entity.type == "ammo-turret" then
+								inventory = entity.get_inventory(defines.inventory.turret_ammo)
+							elseif car_enabled and (entity.type == "car" or entity.type == "spider-vehicle") and not table_is_empty(entity.prototype.guns) then
+								inventory = entity.get_inventory(defines.inventory.car_ammo)
+							elseif artillery_enabled then
+								if entity.type == "artillery-turret" then
+									inventory = entity.get_inventory(defines.inventory.artillery_turret_ammo)
+								elseif entity.type == "artillery-wagon" then
+									inventory = entity.get_inventory(defines.inventory.artillery_wagon_ammo)
 								end
-							elseif entity.type == "car" or entity.type == "spider-vehicle" then
-								ammo_flag = get_ammo_flag[mode](inventory, player_threshold, entity.selected_gun_index)
+							end
+
+							--Check for states of no or low ammo based on mode
+							local ammo_flag
+							if inventory and get_ammo_flag[mode] then
+								if entity.type == "ammo-turret" or entity.type == "artillery-turret" or entity.type == "artillery-wagon" then
+									ammo_flag = get_ammo_flag[mode](inventory, player_threshold)
+									if auto_full and entity.prototype.automated_ammo_count then
+										if entity.prototype.automated_ammo_count < player_threshold then
+											ammo_flag = get_ammo_flag[mode](inventory, entity.prototype.automated_ammo_count)
+										end
+									end
+								elseif entity.type == "car" or entity.type == "spider-vehicle" then
+									ammo_flag = get_ammo_flag[mode](inventory, player_threshold, entity.selected_gun_index)
+								end
+							end
+
+							--Create alert for present state
+							if ammo_flag then
+								-- no ammo alert
+								player.add_custom_alert(entity, {type = "virtual", name = "ammo-icon-red"}, {"gun-turret-alerts.message-empty", entity.localised_name}, true)
+							elseif ammo_flag == false then
+								-- low ammo alert
+								player.add_custom_alert(entity, {type = "virtual", name = "ammo-icon-yellow"}, {"gun-turret-alerts.message-low", entity.localised_name}, true)
 							end
 						end
-
-						--Create alert for present state
-						if ammo_flag then
-							-- no ammo alert
-							player.add_custom_alert(entity, {type = "virtual", name = "ammo-icon-red"}, {"gun-turret-alerts.message-empty", entity.localised_name}, true)
-						elseif ammo_flag == false then
-							-- low ammo alert
-							player.add_custom_alert(entity, {type = "virtual", name = "ammo-icon-yellow"}, {"gun-turret-alerts.message-low", entity.localised_name}, true)
-						end
+					else
+						table.remove(ammo_entities, index)
 					end
-				else
-					ammo_entities[index] = nil
 				end
 			end
 		end
@@ -235,16 +258,19 @@ script.on_event(defines.events.on_player_changed_force, remove_force_from_list)
 script.on_event(defines.events.on_force_created, add_force_to_list)
 script.on_event(defines.events.on_forces_merged, remove_force_from_list)
 
+script.on_event(defines.events.on_surface_created, add_surface_to_list)
 script.on_event(defines.events.on_surface_renamed, remove_surface_from_list)
 script.on_event(defines.events.on_pre_surface_deleted, remove_surface_from_list)
 
 script.on_event(defines.events.on_built_entity, add_entity_to_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "spider-vehicle"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
 script.on_event(defines.events.on_robot_built_entity, add_entity_to_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "spider-vehicle"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
+script.on_event(defines.events.on_space_platform_built_entity, add_entity_to_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "spider-vehicle"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
 script.on_event(defines.events.script_raised_built, add_entity_to_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "spider-vehicle"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
 script.on_event(defines.events.script_raised_revive, add_entity_to_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "spider-vehicle"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
 
 script.on_event(defines.events.on_player_mined_entity, remove_entity_from_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "spider-vehicle"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
 script.on_event(defines.events.on_robot_mined_entity, remove_entity_from_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "spider-vehicle"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
+script.on_event(defines.events.on_space_platform_mined_entity, remove_entity_from_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "spider-vehicle"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
 script.on_event(defines.events.on_entity_died, remove_entity_from_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "spider-vehicle"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
 script.on_event(defines.events.script_raised_destroy, remove_entity_from_list, {{filter="type", type = "ammo-turret"},{filter="type", type = "car"},{filter="type", type = "spider-vehicle"},{filter="type", type = "artillery-turret"},{filter="type", type = "artillery-wagon"}})
 
