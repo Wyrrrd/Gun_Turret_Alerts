@@ -67,6 +67,13 @@ local function add_entity_to_list(event)
 	--Whenever an ammo-turret, vehicle or artillery type entity is built, add it to the global table.
 	local entity = event.created_entity or event.entity
 	local index = entity.surface.name.."_"..entity.force.name
+
+	-- Add table if it doesn't exist and a player of this force is connected
+	if entity.force.connected_players[1] and not storage.ammo_entities[index] then
+		storage.ammo_entities[index] = {}
+	end
+
+	-- Add entity to table
 	if storage.ammo_entities[index] then
 		table.insert(storage.ammo_entities[index], entity)
 	end
@@ -134,20 +141,6 @@ local function remove_force_from_list(event)
 	end
 end
 
-local function add_surface_to_list(event)
-	--Whenever a surface is created, add an empty list to the global table for each force with a connected player.
-	local surface
-	if event.surface_index then
-		surface = game.surfaces[event.surface_index]
-	end
-
-	for _,force in pairs(game.forces) do
-		if surface and surface.valid and not storage.ammo_entities[surface.name.."_"..force.name] and force.connected_players[1] then
-			storage.ammo_entities[surface.name.."_"..force.name] = {}
-		end
-	end
-end
-
 local function remove_surface_from_list(event)
 	--Whenever a surface is renamed or deleted, move/remove all entities in/from the global table.
 	for _,force in pairs(game.forces) do
@@ -195,54 +188,59 @@ local function generate_alerts()
 				ammo_entities = storage.ammo_entities[surface.name.."_"..player.force.name]
 			end
 
-			if ammo_entities and not table_is_empty(ammo_entities) then
-				for index,entity in pairs(ammo_entities) do
-					if entity.valid then
-						if entity.force == player.force then
+			if ammo_entities then
+				if not table_is_empty(ammo_entities) then
+					for index,entity in pairs(ammo_entities) do
+						if entity.valid then
+							if entity.force == player.force then
 
-							--Get ammo inventory based on entity type, skip vehicles without guns
-							local inventory
-							if turret_enabled and entity.type == "ammo-turret" then
-								inventory = entity.get_inventory(defines.inventory.turret_ammo)
-							elseif car_enabled and (entity.type == "car" or entity.type == "spider-vehicle") and not table_is_empty(entity.prototype.guns) then
-								inventory = entity.get_inventory(defines.inventory.car_ammo)
-							elseif artillery_enabled then
-								if entity.type == "artillery-turret" then
-									inventory = entity.get_inventory(defines.inventory.artillery_turret_ammo)
-								elseif entity.type == "artillery-wagon" then
-									inventory = entity.get_inventory(defines.inventory.artillery_wagon_ammo)
-								end
-							end
-
-							--Check for states of no or low ammo based on mode
-							local ammo_flag
-							if inventory and get_ammo_flag[mode] then
-								if entity.type == "ammo-turret" or entity.type == "artillery-turret" or entity.type == "artillery-wagon" then
-									ammo_flag = get_ammo_flag[mode](inventory, player_threshold)
-									-- Automated amme count override (if activated)
-									if auto_full and entity.prototype.automated_ammo_count then
-										if entity.prototype.automated_ammo_count < player_threshold then
-											ammo_flag = get_ammo_flag[mode](inventory, entity.prototype.automated_ammo_count)
-										end
+								--Get ammo inventory based on entity type, skip vehicles without guns
+								local inventory
+								if turret_enabled and entity.type == "ammo-turret" then
+									inventory = entity.get_inventory(defines.inventory.turret_ammo)
+								elseif car_enabled and (entity.type == "car" or entity.type == "spider-vehicle") and not table_is_empty(entity.prototype.guns) then
+									inventory = entity.get_inventory(defines.inventory.car_ammo)
+								elseif artillery_enabled then
+									if entity.type == "artillery-turret" then
+										inventory = entity.get_inventory(defines.inventory.artillery_turret_ammo)
+									elseif entity.type == "artillery-wagon" then
+										inventory = entity.get_inventory(defines.inventory.artillery_wagon_ammo)
 									end
-								elseif entity.type == "car" or entity.type == "spider-vehicle" then
-									ammo_flag = get_ammo_flag[mode](inventory, player_threshold, entity.selected_gun_index)
+								end
+
+								--Check for states of no or low ammo based on mode
+								local ammo_flag
+								if inventory and get_ammo_flag[mode] then
+									if entity.type == "ammo-turret" or entity.type == "artillery-turret" or entity.type == "artillery-wagon" then
+										ammo_flag = get_ammo_flag[mode](inventory, player_threshold)
+										-- Automated amme count override (if activated)
+										if auto_full and entity.prototype.automated_ammo_count then
+											if entity.prototype.automated_ammo_count < player_threshold then
+												ammo_flag = get_ammo_flag[mode](inventory, entity.prototype.automated_ammo_count)
+											end
+										end
+									elseif entity.type == "car" or entity.type == "spider-vehicle" then
+										ammo_flag = get_ammo_flag[mode](inventory, player_threshold, entity.selected_gun_index)
+									end
+								end
+
+								--Create alert for present state
+								if ammo_flag then
+									-- no ammo alert
+									player.add_custom_alert(entity, {type = "virtual", name = "ammo-icon-red"}, {"gun-turret-alerts.message-empty", entity.localised_name}, true)
+								elseif ammo_flag == false then
+									-- low ammo alert
+									player.add_custom_alert(entity, {type = "virtual", name = "ammo-icon-yellow"}, {"gun-turret-alerts.message-low", entity.localised_name}, true)
 								end
 							end
-
-							--Create alert for present state
-							if ammo_flag then
-								-- no ammo alert
-								player.add_custom_alert(entity, {type = "virtual", name = "ammo-icon-red"}, {"gun-turret-alerts.message-empty", entity.localised_name}, true)
-							elseif ammo_flag == false then
-								-- low ammo alert
-								player.add_custom_alert(entity, {type = "virtual", name = "ammo-icon-yellow"}, {"gun-turret-alerts.message-low", entity.localised_name}, true)
-							end
+						else
+							-- Cleanup if entity is invalid
+							table.remove(ammo_entities, index)
 						end
-					else
-						-- Cleanup if entity is invalid
-						table.remove(ammo_entities, index)
 					end
+				else
+					-- Cleanup if table is empty
+					ammo_entites = nil
 				end
 			end
 		end
@@ -262,7 +260,6 @@ script.on_event(defines.events.on_player_changed_force, remove_force_from_list)
 script.on_event(defines.events.on_force_created, add_force_to_list)
 script.on_event(defines.events.on_forces_merged, remove_force_from_list)
 
-script.on_event(defines.events.on_surface_created, add_surface_to_list)
 script.on_event(defines.events.on_surface_renamed, remove_surface_from_list)
 script.on_event(defines.events.on_pre_surface_deleted, remove_surface_from_list)
 
