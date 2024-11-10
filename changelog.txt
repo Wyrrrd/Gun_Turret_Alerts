@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.7
+Date: 2024-11-10
+  Optimizations:
+    - Add cleanup of empty global tables
+    - Move global table creation from on_surface_created to on_built_entity to save on event
+      listeners
+    - Review force rename/removal handling
+    - Code cleanup and comments
+---------------------------------------------------------------------------------------------------
 Version: 2.0.6
 Date: 2024-11-10
   Features:
