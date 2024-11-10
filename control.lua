@@ -240,7 +240,7 @@ local function generate_alerts()
 					end
 				else
 					-- Cleanup if table is empty
-					ammo_entites = nil
+					storage.ammo_entities[surface.name.."_"..player.force.name] = nil
 				end
 			end
 		end
