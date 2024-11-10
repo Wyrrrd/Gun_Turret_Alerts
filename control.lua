@@ -125,9 +125,11 @@ local function remove_force_from_list(event)
 		force = event.source
 	end
 
-	if force and not force.connected_players then
-		for surface_name,_ in pairs(game.surfaces) do
-			storage.ammo_entities[surface_name.."_"..force.name] = nil
+	if force then
+		if not force.valid or (force.valid and table_is_empty(force.connected_players)) then
+			for surface_name,_ in pairs(game.surfaces) do
+				storage.ammo_entities[surface_name.."_"..force.name] = nil
+			end
 		end
 	end
 end
@@ -217,6 +219,7 @@ local function generate_alerts()
 							if inventory and get_ammo_flag[mode] then
 								if entity.type == "ammo-turret" or entity.type == "artillery-turret" or entity.type == "artillery-wagon" then
 									ammo_flag = get_ammo_flag[mode](inventory, player_threshold)
+									-- Automated amme count override (if activated)
 									if auto_full and entity.prototype.automated_ammo_count then
 										if entity.prototype.automated_ammo_count < player_threshold then
 											ammo_flag = get_ammo_flag[mode](inventory, entity.prototype.automated_ammo_count)
@@ -237,6 +240,7 @@ local function generate_alerts()
 							end
 						end
 					else
+						-- Cleanup if entity is invalid
 						table.remove(ammo_entities, index)
 					end
 				end
